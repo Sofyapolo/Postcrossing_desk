@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <title>Стол с открытками</title> -->
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: url('https://i.ibb.co/hJcw8xr1/2.jpg');
+            background-size: cover;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 850px;
+            margin: 100px auto;
+            background: white;
+            border-radius: 15px;
+            padding: 20px 20px 45px 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            background: #DEDAFF;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .desk {
+            position: relative;
+            width: 700px; 
+            height: 400px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 10px;
+            /* box-shadow: 0 10px 20px rgba(0,0,0,0.5); */
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 20px;
+            padding: 30px;
+            align-items: center;
+            justify-items: center;
+        }
+        
+        .desk-item {
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 120px;
+        }
+        
+        .desk-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .item-visual {
+            width: 117px;
+            height: 117px;
+            //background: white;
+            //border: 2px solid #ddd;
+            //border-radius: 10px;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            //box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .item-count {
+            background: #ff6b6b;
+            color: white;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            font-size: 12px;
+        }
+
+        .item-count.has-notification {
+            display: flex;
+        }
+        
+        .item-label {
+            background: rgba(255,255,255,0.9);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .status-details {
+            margin-top: 30px;
+            /* width: 100%; */
+            max-width: 900px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            padding: 25px;
+            display: none;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            /* padding-bottom: 15px; */
+            /* border-bottom: 2px solid #957DAD; */
+        }
+
+        .status-info {
+            padding: 0;
+            margin: 0;
+        }
+
+        .detail-title {
+          font-size: 36px;
+          font-weight: bold;
+          color: #000000;
+          margin: 0;
+          padding: 20px 0 10px 15px;
+          text-align: left;
+        }
+
+        .cards-count {
+            color: black;
+            font-size: 28px;
+            font-weight: 600;
+            padding: 20px 0 0 15px;
+            margin: 0;
+            align-items: border-bottom;
+        }
+
+        .count-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #6B5B95;
+            margin: 0;
+            text-align: left;
+            /* padding-right: 6px;  */
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            /* gap: 15px; */
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 10px;
+            /* border: 1px solid #e0e0e0; */
+            border-radius: 8px;
+            background: white;
+        }
+
+        /* Стили для скроллбара в cards-container */
+        .cards-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .cards-container::-webkit-scrollbar-track {
+            background: white;
+            border-radius: 4px;
+        }
+
+        .cards-container::-webkit-scrollbar-thumb {
+            background: #B3B7E0;
+            border-radius: 4px;
+        }
+
+        .cards-container::-webkit-scrollbar-thumb:hover {
+            background: #6B5B95;
+        }
+
+        .card-item {
+            background: white;
+            padding: 20px;
+            /* margin-bottom: 10px; */
+            display: flex;
+            gap: 20px;
+            border-bottom: 1px solid #B3B7E0;
+            font-size: 14px;
+            align-items: center;
+            min-height: 120px;
+        }
+
+        .card-image {
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
+            cursor: pointer;
+            border-radius: 8px;
+            object-fit: cover;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-image img {
+            width: 100%;
+        }
+
+        .card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .card-field {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-height: 20px;
+            margin-bottom: 4px;
+        }
+
+        .field-label {
+            font-weight: bold;
+            color: #333;
+            min-width: 90px;
+            font-size: 14px;
+        }
+
+        .field-value {
+            color: #666;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .card-id {
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Плашечка "Источник" */
+        .card-source {
+            background: #575757;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 14px;
+            ont-weight: bold;
+            display: inline-block;
+            width: 150px;
+            text-align: center;
+            white-space: nowrap;
+            margin-left: -7px;
+        }
+
+        .card-status-section {
+            width: 170px;
+            flex-shrink: 0;
+            border: 1px solid #B3B7E0;
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .status-label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #888;
+        }
+
+        .status-badge {
+            background: #B3B7E0;
+            width: 100px;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .status-badge:hover {
+            background: #957DAD;
+        }
+
+        .back-btn {
+            display: block;
+            margin: 25px auto 0;
+            padding: 12px 30px;
+            background: #957DAD;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #8367A8;
+            transform: translateY(-1px);
+        }
+        
+        .back-btn:hover {
+            background: #764ba2;
+        }
+        
+        .card-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            background: white;
+        }
+        
+        .icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .status-image {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+        }
+        
+        .item-visual {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .fallback-icon {
+            display: none;
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 10px;
+        }
+        
+        .item-visual img.loaded + .fallback-icon {
+            display: none;
+        }
+        
+        .item-visual img:not(.loaded) + .fallback-icon {
+            display: block;
+        }
+        
+        .status-select {
+            /* width: 150px; */
+            height: 32px;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+            text-align: center;
+            padding: 0 35px 0 12px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            /* Разделяем фон на два слоя */
+            background: 
+                url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") 
+                no-repeat 
+                right 12px center / 16px,
+                var(--status-color, #8367A8);
+            transition: background-color 0.2s ease;
+        }
+
+        .status-select:hover {
+            opacity: 0.9;
+        }
+
+        .show-all-btn {
+            background: #6B5B95;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .show-all-btn:hover {
+            background: #8367A8;
+            transform: translateY(-2px);
+        }
+
+        .card-status-section {
+            width: 170px;
+            flex-shrink: 0;
+            border: 1px solid #B3B7E0;
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .edit-btn {
+            background: #9B9AAA url("https://i.ibb.co/vvJ0SQXP/image.png") no-repeat right 12px center / 16px;
+            height: 32px;
+            width: 173px;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+            text-align: center;
+            padding: 0 35px 0 12px;
+            appearance: none;
+            transition: background-color 0.2s ease;
+        }
+
+        .edit-btn:hover {
+            background: #A8A8B8 url("https://i.ibb.co/vvJ0SQXP/image.png") no-repeat right 12px center / 16px;
+        }
+
+        /* <!-- Окно редактирования открытки -->
+        .edit-input[type="textarea"] {
+            resize: vertical;
+            min-height: 60px;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Стили для выпадающих списков */
+        .edit-input[type="select"] {
+            appearance: menulist;
+        }
+
+        /* Группировка полей */
+        .edit-form-section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .edit-form-section h3 {
+            margin: 0 0 15px 0;
+            color: #6B5B95;
+            font-size: 16px;
+        } */
+
+        /* Стили для диалога редактирования */
+        .edit-dialog-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            backdrop-filter: blur(5px);
+        }
+
+        .edit-dialog {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            width: 400px;
+            max-height: 68vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: fixed;
+            top: 10%;
+            left: 30%;
+        }
+
+        .edit-dialog-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .edit-dialog-header h2 {
+            margin: 0;
+            color: #6B5B95;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            padding: 5px;
+        }
+
+        .close-btn:hover {
+            color: #666;
+        }
+
+        .edit-form-section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .edit-form-section h3 {
+            margin: 0 0 15px 0;
+            color: #6B5B95;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-field {
+            margin-bottom: 15px;
+        }
+
+        .form-field label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-field input,
+        .form-field select,
+        .form-field textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-field input:focus,
+        .form-field select:focus,
+        .form-field textarea:focus {
+            outline: none;
+            border-color: #6B5B95;
+            box-shadow: 0 0 0 2px rgba(107, 91, 149, 0.1);
+        }
+
+        .form-field input[disabled] {
+            background-color: #f5f5f5;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .form-field textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        .cancel-btn {
+            padding: 12px 25px;
+            background: #f5f5f5;
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .save-btn {
+            padding: 12px 25px;
+            background: #6B5B95;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .cancel-btn:hover,
+        .save-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .save-btn:hover {
+            background: #8367A8;
+        }
+
+        .cancel-btn:hover {
+            background: #e0e0e0;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- <h1>📮 Мой стол с открытками</h1> -->
+        <div class="desk">
+            <!-- Верхний ряд -->
+            <div class="desk-item status-item no-card" onclick="showDetails('Нет открытки')">
+                <div class="item-visual">
+                    <img src="" 
+                        alt="Нет открытки" 
+                        class="status-image"
+                        data-status="Нет открытки"
+                        onload="this.classList.add('loaded')">
+                    <img class="fallback-icon" src="https://i.ibb.co/q3S7DMjF/image.jpg" alt="image" border="0">
+                    <div class="item-count" id="count-no-card">0</div>
+                </div>
+                <div class="item-label">Нет открытки</div>
+            </div>
+
+            <div class="desk-item status-item in-process" onclick="showDetails('В процессе')">
+                <div class="item-visual">
+                    <img src="" 
+                        alt="В процессе" 
+                        class="status-image"
+                        data-status="В процессе"
+                        onload="this.classList.add('loaded')">
+                    <img class="fallback-icon" src="https://i.ibb.co/6R0b4JCR/image.jpg" alt="image" border="0">
+                    <div class="item-count" id="count-in-process">0</div>
+                </div>
+                <div class="item-label">В процессе</div>
+            </div>
+
+            <div class="desk-item map-item" onclick="showTravelCards()">
+                <div class="item-visual">
+                    <img src="" 
+                        alt="Карта" 
+                        class="status-image"
+                        data-status="Карта"
+                        onload="this.classList.add('loaded')">
+                    <img class="fallback-icon" src="https://i.ibb.co/dsYWhT2q/image.jpg" alt="image" border="0">
+                    <div class="item-count" id="count-map">0</div>
+                </div>
+                <div class="item-label">Карта</div>
+            </div>
+            
+            <!-- Нижний ряд -->
+            <div class="desk-item status-item no-stamp" onclick="showDetails('Нет марки')">
+                <div class="item-visual">
+                    <img src="" 
+                        alt="Нет марки" 
+                        class="status-image"
+                        data-status="Нет марки"
+                        onload="this.classList.add('loaded')">
+                    <img class="fallback-icon" src="https://i.ibb.co/j9zFyhQp/image.jpg" alt="image" border="0">
+                    <div class="item-count" id="count-no-stamp">0</div>
+                </div>
+                <div class="item-label">Нет марки</div>
+            </div>
+
+            <div class="desk-item add-item" onclick="addNewPostcard()">
+                <div class="item-visual">
+                    <img src="" 
+                        alt="Добавить открытку" 
+                        class="status-image"
+                        data-status="Добавить открытку"
+                        onload="this.classList.add('loaded')">
+                    <img class="fallback-icon" src="https://i.ibb.co/G39xxLcM/image.jpg" alt="image" border="0">
+                </div>
+                <div class="item-label" style="color: #4CAF50;">Добавить открытку</div>
+            </div>
+
+            <div class="desk-item status-item ready" onclick="showDetails('Готово к отправке')">
+                <div class="item-visual">
+                    <img src="" 
+                        alt="Готово к отправке" 
+                        class="status-image"
+                        data-status="Готово к отправке"
+                        onload="this.classList.add('loaded')">
+                    <img class="fallback-icon" src="https://i.ibb.co/7NV01Fcs//image.jpg" alt="image" border="0">
+                    <div class="item-count" id="count-ready">0</div>
+                </div>
+                <div class="item-label">Готово к отправке</div>
+            </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <button class="show-all-btn" onclick="showAllCards()">Показать все</button>
+    </div>
+
+    <div id="statusDetails" class="status-details">
+        <div class="detail-header">
+            <div class="status-info">
+                <h1 class="detail-title" id="detailTitle">В процессе</h1>          
+                <div class="cards-count" id="detailCount">
+                    <span class="count-number">0</span>
+                    <span class="cards-text">открыток</span>
+                </div>
+            </div>
+        </div>
+        <div id="cardsContainer" class="cards-container">
+            <div class="loading">Загрузка открыток...</div>
+        </div>
+        <button class="back-btn" onclick="hideDetails()">Назад к столу</button>
+    </div>
+
+    <script>
+        let statusData = {};
+        
+        // В функции loadStatusData обновите обработку ошибок:
+        function loadStatusData() {
+            google.script.run
+                .withSuccessHandler(function(data) {
+                    statusData = data; // Сохраняем в глобальную переменную
+                    updateDeskView();
+                })
+                .withFailureHandler(function(error) {
+                    console.error('Ошибка загрузки:', error);
+                    // Используем нули при ошибке
+                    statusData = {
+                        'В процессе': 0,
+                        'Готово к отправке': 0,
+                        'Нет открытки': 0,
+                        'Нет марки': 0
+                    };
+                    updateDeskView();
+                })
+                .getStatusCounts();
+        }
+        
+        function updateDeskView() {
+            // Обновляем счетчики из глобального statusData
+            const counters = {
+                'count-in-process': statusData['В процессе'] || 0,
+                'count-ready': statusData['Готово к отправке'] || 0,
+                'count-no-card': statusData['Нет открытки'] || 0,
+                'count-no-stamp': statusData['Нет марки'] || 0,
+                'count-map': statusData['Карта'] || 0 // Добавляем счетчик карты
+            };
+            
+            Object.keys(counters).forEach(counterId => {
+                const counter = document.getElementById(counterId);
+                const count = counters[counterId];
+                
+                if (counter) {
+                    counter.textContent = count;
+                    
+                    // Показываем только если есть уведомления
+                    if (count > 0) {
+                        counter.classList.add('has-notification');
+                    } else {
+                        counter.classList.remove('has-notification');
+                    }
+                }
+            });
+        }
+        
+        function showDetails(status) {
+            // Сначала устанавливаем 0, пока данные загружаются
+            document.getElementById('detailTitle').textContent = status;
+            document.getElementById('detailCount').innerHTML = '<span class="count-number">0</span> ' + getCardWord(0);
+            
+            // Показываем секцию
+            document.getElementById('statusDetails').style.display = 'block';
+            
+            // Показываем загрузку
+            document.getElementById('cardsContainer').innerHTML = '<div class="loading">Загрузка открыток...</div>';
+            
+            // Прокручиваем к секции
+            setTimeout(() => {
+                document.getElementById('statusDetails').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }, 100);
+            
+            // Загружаем данные и ОБНОВЛЯЕМ счетчик после получения реальных данных
+            google.script.run
+                .withSuccessHandler(function(cards) {
+                    // Обновляем счетчик реальным количеством
+                    const realCount = cards ? cards.length : 0;
+                    document.getElementById('detailCount').innerHTML = '<span class="count-number">' + realCount + '</span> ' + getCardWord(realCount);
+                    
+                    displayCards(cards, status);
+                })
+                .withFailureHandler(function(error) {
+                    document.getElementById('cardsContainer').innerHTML = 
+                        '<div class="loading">Ошибка загрузки: ' + error + '</div>';
+                })
+                .getCardsByStatus(status);
+        }
+
+        function getCardWord(count) {
+            if (count >= 11 && count <= 14) {
+                return 'открыток';
+            }
+            
+            const lastDigit = count % 10;
+            
+            if (lastDigit === 1) {
+                return 'открытка';
+            } else if (lastDigit >= 2 && lastDigit <= 4) {
+                return 'открытки';
+            } else {
+                return 'открыток';
+            }
+        }
+
+        function updateCardsText(count) {
+            const countElement = document.querySelector('.count-number');
+            const textElement = document.querySelector('.cards-text');
+                    
+            countElement.textContent = count;
+            textElement.textContent = getCardWord(count);
+        }
+
+        function displayCards(cards, currentStatus) {
+            const container = document.getElementById('cardsContainer');
+            
+            if (!cards || cards.length === 0) {
+                container.innerHTML = '<div class="loading">Нет открыток с этим статусом</div>';
+                return;
+            }
+            
+            let html = '';
+            cards.forEach((card, index) => {
+                const cardId = card.id && card.id.toString().trim() !== '' ? card.id : 'Без ID';
+                const source = card.source && card.source !== 'Не указано' ? card.source : 'Не указано';
+                const name = card.name && card.name !== 'Не указано' ? card.name : 'Не указано';
+                const city = card.city && card.city !== 'Не указано' ? card.city : 'Не указано';
+                const country = card.country && card.country !== 'Не указано' ? card.country : 'Не указано';
+                const location = city + ', ' + country;
+                const indexCode = card.index && card.index !== 'Не указано' ? card.index : 'Не указано';
+                
+                const showId = source !== 'Личные' && cardId !== '' && cardId !== 'Без ID';
+                
+                // ВСЕ статусы для обычного просмотра по статусам
+                const statusOptions = ['В процессе', 'Готово к отправке', 'Нет открытки', 'Нет марки', 'В пути', 'Потеряно', 'Получено'];
+                const statusColors = {
+                    'В процессе': '#8367A8',
+                    'Готово к отправке': '#6B5B95',
+                    'Нет открытки': '#8A8FC8',
+                    'Нет марки': '#957DAD',
+                    'В пути': '#FFA500',
+                    'Потеряно': '#FF6B6B',
+                    'Получено': '#4CAF50'
+                };
+                
+                const currentCardStatus = card.status || currentStatus;
+                const statusColor = statusColors[currentCardStatus] || '#8367A8';
+                
+                html += `
+                  <div class="card-item">
+                      <div class="card-image" onclick="addPhoto('${cardId}')">
+                          <img src="https://i.ibb.co/Y7KJHjn6/image.jpg" alt="Добавить фото открытки">
+                      </div>
+                      
+                      <div class="card-content">
+                          ${showId ? `
+                          <div class="card-field">
+                              <span class="field-label">ID:</span>
+                              <span class="field-value card-id">${cardId}</span>
+                          </div>
+                          ` : ''}
+                          <div class="card-field">
+                              <span class="field-label">Источник:</span>
+                              <span class="field-value card-source">${source}</span>
+                          </div>
+                          <div class="card-field">
+                              <span class="field-label">Имя:</span>
+                              <span class="field-value">${name}</span>
+                          </div>
+                          <div class="card-field">
+                              <span class="field-label">Адрес:</span>
+                              <span class="field-value">${location}</span>
+                          </div>
+                          <div class="card-field">
+                              <span class="field-label">Индекс:</span>
+                              <span class="field-value card-index">${indexCode}</span>
+                          </div>
+                      </div>
+                      
+                      <div class="card-status-section">
+                          <div class="status-label">Статус</div>
+                          <select class="status-select" 
+                                  data-card-id="${cardId}" 
+                                  data-current-status="${currentCardStatus}"
+                                  style="--status-color: ${statusColor}">
+                              ${statusOptions.map(status => 
+                                  `<option value="${status}" ${status === currentCardStatus ? 'selected' : ''}>${status}</option>`
+                              ).join('')}
+                          </select>
+                          <button class="edit-btn" onclick="editCard('${cardId}')">Редактировать</button>
+                      </div>
+                  </div>
+              `;
+            });
+            
+            container.innerHTML = html;
+            addStatusChangeHandlers();
+        }
+
+        function addStatusChangeHandlers() {
+            const statusSelects = document.querySelectorAll('.status-select');
+            
+            statusSelects.forEach(select => {
+                select.addEventListener('change', function() {
+                    const cardId = this.getAttribute('data-card-id');
+                    const newStatus = this.value;
+                    const oldStatus = this.getAttribute('data-current-status');
+                    
+                    if (newStatus !== oldStatus) {
+                        // Обновляем цвет фона через CSS переменную
+                        const statusColors = {
+                            'В процессе': '#8367A8',
+                            'Готово к отправке': '#6B5B95',
+                            'Нет открытки': '#8A8FC8',
+                            'Нет марки': '#957DAD'
+                        };
+                        this.style.setProperty('--status-color', statusColors[newStatus] || '#8367A8');
+                        
+                        // Обновляем атрибут текущего статуса
+                        this.setAttribute('data-current-status', newStatus);
+                        
+                        // ОБНОВЛЯЕМ СЧЕТЧИКИ НА СТОЛЕ
+                        updateStatusCountsOnDesk(oldStatus, newStatus);
+                        
+                        // Отправляем запрос на обновление
+                        google.script.run
+                            .withSuccessHandler(function(result) {
+                                if (result.success) {
+                                    showTempNotification('Статус обновлен!');
+                                } else {
+                                    showTempNotification('Ошибка: ' + result.message, 'error');
+                                    // Возвращаем старый статус при ошибке
+                                    select.value = oldStatus;
+                                    select.style.setProperty('--status-color', statusColors[oldStatus] || '#8367A8');
+                                    // Откатываем счетчики
+                                    updateStatusCountsOnDesk(newStatus, oldStatus);
+                                }
+                            })
+                            .withFailureHandler(function(error) {
+                                showTempNotification('Ошибка соединения', 'error');
+                                // Возвращаем старый статус при ошибке
+                                select.value = oldStatus;
+                                select.style.setProperty('--status-color', statusColors[oldStatus] || '#8367A8');
+                                // Откатываем счетчики
+                                updateStatusCountsOnDesk(newStatus, oldStatus);
+                            })
+                            .quickUpdateStatus(cardId, newStatus);
+                    }
+                });
+            });
+        }
+
+        function updateStatusCountsOnDesk(oldStatus, newStatus) {
+            // Определяем статусы доставки для карты
+            const travelStatuses = ['В пути', 'Потеряно', 'Получено'];
+            
+            // Обновляем глобальные данные для основных статусов
+            const mainStatuses = ['В процессе', 'Готово к отправке', 'Нет открытки', 'Нет марки'];
+            
+            if (mainStatuses.includes(oldStatus) && statusData[oldStatus] > 0) {
+                statusData[oldStatus]--;
+            }
+            if (mainStatuses.includes(newStatus)) {
+                statusData[newStatus] = (statusData[newStatus] || 0) + 1;
+            }
+            
+            // Обновляем счетчик карты
+            if (travelStatuses.includes(oldStatus) && statusData['Карта'] > 0) {
+                statusData['Карта']--;
+            }
+            if (travelStatuses.includes(newStatus)) {
+                statusData['Карта'] = (statusData['Карта'] || 0) + 1;
+            }
+            
+            // Обновляем отображение на столе
+            updateDeskView();
+            
+            // Если мы сейчас в детальном просмотре, обновляем заголовок
+            const currentDetailStatus = document.getElementById('detailTitle').textContent;
+            if (currentDetailStatus === oldStatus || currentDetailStatus === newStatus) {
+                const currentCount = statusData[currentDetailStatus] || 0;
+                document.getElementById('detailCount').innerHTML = 
+                    '<span class="count-number">' + currentCount + '</span> ' + getCardWord(currentCount);
+            }
+        }
+
+        function addPhoto(cardId) {
+            alert('В будущем здесь будет загрузка фото для открытки: ' + cardId);
+            // TODO: Реализовать загрузку фото
+        }
+
+        function getStatusColor(status) {
+            const colors = {
+                'В процессе': '#8367A8',
+                'Готово к отправке': '#6B5B95',
+                'Нет открытки': '#8A8FC8',
+                'Нет марки': '#957DAD'
+            };
+            return colors[status] || '#8367A8';
+        }
+
+        // Вспомогательная функция для получения цвета статуса
+        function getStatusColor(status) {
+            const colors = {
+                'В процессе': '#8367A8',
+                'Готово к отправке': '#6B5B95',
+                'Нет открытки': '#8A8FC8',
+                'Нет марки': '#957DAD'
+            };
+            return colors[status] || '#8367A8';
+        }
+
+        // Упрощенная функция обновления статуса
+        function updateCardStatusInList(cardItem, newStatus) {
+            const statusColors = {
+                'В процессе': '#8367A8',
+                'Готово к отправке': '#6B5B95', 
+                'Нет открытки': '#8A8FC8',
+                'Нет марки': '#957DAD'
+            };
+            
+            const statusColor = statusColors[newStatus] || '#8367A8';
+            const cardId = cardItem.querySelector('.card-id').textContent;
+            
+            const parentSection = cardItem.querySelector('.card-status-section');
+            parentSection.innerHTML = `
+                <div class="status-label">Статус</div>
+                <div class="status-badge" onclick="changeStatus('${cardId}', '${newStatus}')" 
+                    style="background: ${statusColor}">
+                    ${newStatus}
+                </div>
+            `;
+        }
+
+        function showAllCards() {
+            // Сначала устанавливаем 0
+            document.getElementById('detailTitle').textContent = 'Все открытки';
+            document.getElementById('detailCount').innerHTML = '<span class="count-number">0</span> ' + getCardWord(0);
+            
+            // Показываем секцию
+            document.getElementById('statusDetails').style.display = 'block';
+            
+            // Показываем загрузку
+            document.getElementById('cardsContainer').innerHTML = '<div class="loading">Загрузка всех открыток...</div>';
+            
+            // Прокручиваем к секции
+            setTimeout(() => {
+                document.getElementById('statusDetails').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }, 100);
+            
+            // Загружаем ВСЕ данные и обновляем счетчик
+            google.script.run
+                .withSuccessHandler(function(cards) {
+                    // Обновляем счетчик реальным количеством
+                    const realCount = cards ? cards.length : 0;
+                    document.getElementById('detailCount').innerHTML = '<span class="count-number">' + realCount + '</span> ' + getCardWord(realCount);
+                    
+                    displayAllCards(cards);
+                })
+                .withFailureHandler(function(error) {
+                    document.getElementById('cardsContainer').innerHTML = 
+                        '<div class="loading">Ошибка загрузки: ' + error + '</div>';
+                })
+                .getAllCards();
+        }
+
+function displayAllCards(cards) {
+    const container = document.getElementById('cardsContainer');
+    
+    if (!cards || cards.length === 0) {
+        container.innerHTML = '<div class="loading">Нет открыток</div>';
+        return;
+    }
+    
+    let html = '';
+    cards.forEach((card, index) => {
+        const cardId = card.id && card.id.toString().trim() !== '' ? card.id : 'Без ID';
+        const source = card.source && card.source !== 'Не указано' ? card.source : 'Не указано';
+        const name = card.name && card.name !== 'Не указано' ? card.name : 'Не указано';
+        const city = card.city && card.city !== 'Не указано' ? card.city : 'Не указано';
+        const country = card.country && card.country !== 'Не указано' ? card.country : 'Не указано';
+        const location = city + ', ' + country;
+        const indexCode = card.index && card.index !== 'Не указано' ? card.index : 'Не указано';
+        const currentCardStatus = card.status || 'Не указано';
+        
+        const showId = source !== 'Личные' && cardId !== '' && cardId !== 'Без ID';
+        
+        // ВСЕ статусы для списка "Все открытки"
+        const statusOptions = ['В процессе', 'Готово к отправке', 'Нет открытки', 'Нет марки', 'В пути', 'Потеряно', 'Получено'];
+        const statusColors = {
+            'В процессе': '#8367A8',
+            'Готово к отправке': '#6B5B95',
+            'Нет открытки': '#8A8FC8',
+            'Нет марки': '#957DAD',
+            'В пути': '#FFA500',
+            'Потеряно': '#FF6B6B',
+            'Получено': '#4CAF50'
+        };
+        
+        const statusColor = statusColors[currentCardStatus] || '#8367A8';
+        
+        html += `
+            <div class="card-item">
+                <div class="card-image" onclick="addPhoto('${cardId}')">
+                    <img src="https://i.ibb.co/Y7KJHjn6/image.jpg" alt="Добавить фото открытки">
+                </div>
+                
+                <div class="card-content">
+                    ${showId ? `
+                    <div class="card-field">
+                        <span class="field-label">ID:</span>
+                        <span class="field-value card-id">${cardId}</span>
+                    </div>
+                    ` : ''}
+                    <div class="card-field">
+                        <span class="field-label">Источник:</span>
+                        <span class="field-value card-source">${source}</span>
+                    </div>
+                    <div class="card-field">
+                        <span class="field-label">Имя:</span>
+                        <span class="field-value">${name}</span>
+                    </div>
+                    <div class="card-field">
+                        <span class="field-label">Адрес:</span>
+                        <span class="field-value">${location}</span>
+                    </div>
+                    <div class="card-field">
+                        <span class="field-label">Индекс:</span>
+                        <span class="field-value card-index">${indexCode}</span>
+                    </div>
+                </div>
+                
+                <div class="card-status-section">
+                    <div class="status-label">Статус</div>
+                    <select class="status-select" 
+                            data-card-id="${cardId}" 
+                            data-current-status="${currentCardStatus}"
+                            style="--status-color: ${statusColor}">
+                        ${statusOptions.map(status => 
+                            `<option value="${status}" ${status === currentCardStatus ? 'selected' : ''}>${status}</option>`
+                        ).join('')}
+                    </select>
+                    <button class="edit-btn" onclick="editCard('${cardId}')">Редактировать</button>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+    addStatusChangeHandlers();
+}
+
+// Функция для редактирования открыток
+function editCard(cardId) {
+    // Показываем диалоговое окно редактирования
+    google.script.run
+        .withSuccessHandler(function(cardData) {
+            if (cardData.success) {
+                showEditDialog(cardData.card);
+            } else {
+                showTempNotification('Ошибка загрузки данных открытки: ' + cardData.message, 'error');
+            }
+        })
+        .withFailureHandler(function(error) {
+            showTempNotification('Ошибка загрузки данных: ' + error, 'error');
+        })
+        .getCardData(cardId);
+}
+
+function closeEditDialog() {
+    if (window.currentEditDialog) {
+        window.currentEditDialog.remove();
+        window.currentEditDialog = null;
+    }
+}
+
+
+// Функция временного уведомления (хз что такое)
+function showTempNotification(message, type = 'success') {
+    const backgroundColor = type === 'error' ? '#ff6b6b' : '#4CAF50';
+    
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${backgroundColor};
+        color: white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        z-index: 10000;
+        font-size: 13px;
+        font-weight: bold;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 1500); // Более короткое время показа
+}
+
+        // Функция для обновления счетчика текущего статуса
+        function updateCurrentStatusCount(change) {
+            const countElement = document.querySelector('.count-number');
+            const currentCount = parseInt(countElement.textContent);
+            const newCount = Math.max(0, currentCount + change);
+            
+            countElement.textContent = newCount;
+            
+            // Обновляем текстовую форму
+            const textElement = document.querySelector('.cards-text');
+            textElement.textContent = getCardWord(newCount);
+            
+            // Если открыток не осталось, показываем сообщение
+            if (newCount === 0) {
+                const cardsContainer = document.getElementById('cardsContainer');
+                cardsContainer.innerHTML = '<div class="loading">Нет открыток с этим статусом</div>';
+            }
+        }
+
+        // Функция временного уведомления
+        function showTempNotification(message) {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #4CAF50;
+                color: white;
+                padding: 10px 20px;
+                border-radius: 5px;
+                z-index: 1000;
+                font-size: 14px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.5s';
+                setTimeout(() => {
+                    notification.remove();
+                }, 500);
+            }, 2000);
+        }
+        
+        function hideDetails() {
+            document.getElementById('statusDetails').style.display = 'none';
+            document.getElementById('cardsContainer').innerHTML = '';
+            // Сбрасываем заголовок
+            document.getElementById('detailTitle').textContent = '';
+        }
+
+        function showTravelCards() {
+            // Обновляем заголовок
+            document.getElementById('detailTitle').textContent = 'Статусы доставки';
+            document.getElementById('detailCount').innerHTML = '<span class="count-number">0</span> ' + getCardWord(0);
+            
+            // Показываем секцию
+            document.getElementById('statusDetails').style.display = 'block';
+            
+            // Показываем загрузку
+            document.getElementById('cardsContainer').innerHTML = '<div class="loading">Загрузка открыток...</div>';
+            
+            // Прокручиваем к секции
+            setTimeout(() => {
+                document.getElementById('statusDetails').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }, 100);
+            
+            // Загружаем открытки со статусами доставки
+            google.script.run
+                .withSuccessHandler(function(cards) {
+                    const realCount = cards ? cards.length : 0;
+                    document.getElementById('detailCount').innerHTML = '<span class="count-number">' + realCount + '</span> ' + getCardWord(realCount);
+                    displayTravelCards(cards);
+                })
+                .withFailureHandler(function(error) {
+                    document.getElementById('cardsContainer').innerHTML = 
+                        '<div class="loading">Ошибка загрузки: ' + error + '</div>';
+                })
+                .getTravelStatusCards();
+        }
+
+          function displayTravelCards(cards) {
+            const container = document.getElementById('cardsContainer');
+            
+            if (!cards || cards.length === 0) {
+                container.innerHTML = '<div class="loading">Нет открыток со статусами доставки</div>';
+                return;
+            }
+            
+            let html = '';
+            cards.forEach((card, index) => {
+                const cardId = card.id && card.id.toString().trim() !== '' ? card.id : 'Без ID';
+                const source = card.source && card.source !== 'Не указано' ? card.source : 'Не указано';
+                const name = card.name && card.name !== 'Не указано' ? card.name : 'Не указано';
+                const city = card.city && card.city !== 'Не указано' ? card.city : 'Не указано';
+                const country = card.country && card.country !== 'Не указано' ? card.country : 'Не указано';
+                const location = city + ', ' + country;
+                const indexCode = card.index && card.index !== 'Не указано' ? card.index : 'Не указано';
+                const currentCardStatus = card.status || 'Не указано';
+                
+                const showId = source !== 'Личные' && cardId !== '' && cardId !== 'Без ID';
+                
+                // Статусы для доставки
+                const statusOptions = ['В пути', 'Потеряно', 'Получено', 'В процессе', 'Готово к отправке', 'Нет открытки', 'Нет марки'];
+                const statusColors = {
+                    'В пути': '#FFA500',
+                    'Потеряно': '#FF6B6B', 
+                    'Получено': '#4CAF50',
+                };
+                
+                const statusColor = statusColors[currentCardStatus] || '#8367A8';
+                
+                html += `
+                    <div class="card-item">
+                        <div class="card-image" onclick="addPhoto('${cardId}')">
+                            <img src="https://i.ibb.co/Y7KJHjn6/image.jpg" alt="Добавить фото открытки">
+                        </div>
+                        
+                        <div class="card-content">
+                            ${showId ? `
+                            <div class="card-field">
+                                <span class="field-label">ID:</span>
+                                <span class="field-value card-id">${cardId}</span>
+                            </div>
+                            ` : ''}
+                            <div class="card-field">
+                                <span class="field-label">Источник:</span>
+                                <span class="field-value card-source">${source}</span>
+                            </div>
+                            <div class="card-field">
+                                <span class="field-label">Имя:</span>
+                                <span class="field-value">${name}</span>
+                            </div>
+                            <div class="card-field">
+                                <span class="field-label">Адрес:</span>
+                                <span class="field-value">${location}</span>
+                            </div>
+                            <div class="card-field">
+                                <span class="field-label">Индекс:</span>
+                                <span class="field-value card-index">${indexCode}</span>
+                            </div>
+                            ${card.sentDate && card.sentDate !== 'Не указано' && card.sentDate !== '' ? `
+                            <div class="card-field">
+                                <span class="field-label">Отправлено:</span>
+                                <span class="field-value">${card.sentDate}</span>
+                            </div>
+                            ` : ''}
+                            ${card.receivedDate && card.receivedDate !== 'Не указано' && card.receivedDate !== '' ? `
+                            <div class="card-field">
+                                <span class="field-label">Получено:</span>
+                                <span class="field-value">${card.receivedDate}</span>
+                            </div>
+                            ` : ''}
+                            ${card.daysInTransit && card.daysInTransit !== 'Не указано' && card.daysInTransit !== '' ? `
+                            <div class="card-field">
+                                <span class="field-label">Дней в пути:</span>
+                                <span class="field-value">${card.daysInTransit}</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="card-status-section">
+                            <div class="status-label">Статус</div>
+                            <select class="status-select" 
+                                    data-card-id="${cardId}" 
+                                    data-current-status="${currentCardStatus}"
+                                    style="--status-color: ${statusColor}">
+                                ${statusOptions.map(status => 
+                                    `<option value="${status}" ${status === currentCardStatus ? 'selected' : ''}>${status}</option>`
+                                ).join('')}
+                            </select>
+                            <button class="edit-btn" onclick="editCard('${cardId}')">Редактировать</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            addStatusChangeHandlers();
+        }
+
+                // Функция для показа диалога редактирования
+        function showEditDialog(cardData) {
+            // Создаем модальное окно
+            const dialog = document.createElement('div');
+            dialog.className = 'edit-dialog-overlay';
+            
+            // Форматируем даты для input type="date"
+            const formatDateForInput = (dateStr) => {
+                if (!dateStr || dateStr === 'Не указано') return '';
+                // Если дата в формате дд.мм.гггг
+                if (dateStr.match(/^\d{2}\.\d{2}\.\d{4}$/)) {
+                    const parts = dateStr.split('.');
+                    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+                }
+                return dateStr;
+            };
+
+            const sentDate = formatDateForInput(cardData.sentDate);
+            const receivedDate = formatDateForInput(cardData.receivedDate);
+
+            dialog.innerHTML = `
+                <div class="edit-dialog">
+                    <div class="edit-dialog-header">
+                        <h2>Редактирование открытки</h2>
+                        <button class="close-btn" onclick="closeEditDialog()">×</button>
+                    </div>
+
+                    <form id="editForm">
+                        <!-- Секция основной информации -->
+                        <div class="edit-form-section">
+                            <h3>Основная информация</h3>
+                            <div>
+                                <div class="form-field">
+                                    <label>ID:</label>
+                                    <input type="text" value="${cardData.id}" disabled>
+                                </div>
+                                <div class="form-field">
+                                    <label>Источник:</label>
+                                    <select name="source" id="source-select-${cardId}">
+                                        <!-- Опции будут загружены динамически -->
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Секция дат -->
+                        <div class="edit-form-section">
+                            <h3>Даты</h3>
+                            <div>
+                                <div class="form-field">
+                                    <label>Дата отправки:</label>
+                                    <input type="date" name="sentDate" value="${sentDate}">
+                                </div>
+                                <div class="form-field">
+                                    <label>Дата получения:</label>
+                                    <input type="date" name="receivedDate" value="${receivedDate}">
+                                </div>
+                            </div>
+                            <div class="form-field">
+                                <label>Дней в пути:</label>
+                                <input type="number" name="daysInTransit" value="${cardData.daysInTransit || ''}">
+                            </div>
+                        </div>
+
+                        <!-- Секция адреса -->
+                        <div class="edit-form-section">
+                            <h3>Адрес получателя</h3>
+                            <div>
+                                <div class="form-field">
+                                    <label>Имя:</label>
+                                    <input type="text" name="name" value="${cardData.name || ''}">
+                                </div>
+                                <div class="form-field">
+                                    <label>Индекс:</label>
+                                    <input type="text" name="index" value="${cardData.index || ''}">
+                                </div>
+                                <div class="form-field">
+                                    <label>Город:</label>
+                                    <input type="text" name="city" value="${cardData.city || ''}">
+                                </div>
+                                <div class="form-field">
+                                    <label>Страна:</label>
+                                    <input type="text" name="country" value="${cardData.country || ''}">
+                                </div>
+                            </div>
+                            <div class="form-field">
+                                <label>Координаты (широта,долгота):</label>
+                                <input type="text" name="coordinates" value="${cardData.coordinates || ''}" placeholder="55.7558,37.6173">
+                            </div>
+                        </div>
+
+                        <!-- Секция статуса и дополнительной информации -->
+                        <div class="edit-form-section">
+                            <h3>Статус и заметки</h3>
+                            <div class="form-field">
+                                <label>Статус:</label>
+                                <select name="status">
+                                    <option value="В процессе" ${cardData.status === 'В процессе' ? 'selected' : ''}>В процессе</option>
+                                    <option value="Готово к отправке" ${cardData.status === 'Готово к отправке' ? 'selected' : ''}>Готово к отправке</option>
+                                    <option value="Нет открытки" ${cardData.status === 'Нет открытки' ? 'selected' : ''}>Нет открытки</option>
+                                    <option value="Нет марки" ${cardData.status === 'Нет марки' ? 'selected' : ''}>Нет марки</option>
+                                    <option value="В пути" ${cardData.status === 'В пути' ? 'selected' : ''}>В пути</option>
+                                    <option value="Потеряно" ${cardData.status === 'Потеряно' ? 'selected' : ''}>Потеряно</option>
+                                    <option value="Получено" ${cardData.status === 'Получено' ? 'selected' : ''}>Получено</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label>Заметки:</label>
+                                <textarea name="notes" rows="3" placeholder="Дополнительные заметки...">${cardData.notes || ''}</textarea>
+                            </div>
+                            <div class="form-field">
+                                <label>Ссылка на изображение:</label>
+                                <input type="url" name="imageUrl" value="${cardData.imageUrl || ''}" placeholder="https://example.com/image.jpg">
+                            </div>
+                        </div>
+
+                        <!-- Кнопки действий -->
+                        <div class="form-actions">
+                            <button type="button" class="cancel-btn" onclick="closeEditDialog()">Отмена</button>
+                            <button type="button" class="save-btn" onclick="saveCardChanges('${cardData.id}')">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            document.body.appendChild(dialog);
+            window.currentEditDialog = dialog;
+
+            // Автофокус на первом поле
+            const firstInput = dialog.querySelector('input:not([disabled]), select');
+            if (firstInput) firstInput.focus();
+        }
+
+        // Функция сохранения изменений
+        function saveCardChanges(cardId) {
+            const form = document.getElementById('editForm');
+            const formData = new FormData(form);
+            
+            const updatedData = {
+                source: formData.get('source'),
+                sentDate: formData.get('sentDate'),
+                receivedDate: formData.get('receivedDate'),
+                daysInTransit: formData.get('daysInTransit'),
+                status: formData.get('status'),
+                name: formData.get('name'),
+                country: formData.get('country'),
+                city: formData.get('city'),
+                index: formData.get('index'),
+                coordinates: formData.get('coordinates'),
+                notes: formData.get('notes'),
+                imageUrl: formData.get('imageUrl')
+            };
+
+            // Показываем индикатор загрузки
+            const saveButton = document.querySelector('.save-btn');
+            const originalText = saveButton.textContent;
+            saveButton.textContent = 'Сохранение...';
+            saveButton.disabled = true;
+
+            google.script.run
+                .withSuccessHandler(function(result) {
+                    if (result.success) {
+                        showTempNotification('Данные успешно сохранены!');
+                        closeEditDialog();
+                        
+                        // Обновляем отображение на странице
+                        const currentTitle = document.getElementById('detailTitle').textContent;
+                        if (currentTitle === 'Все открытки') {
+                            showAllCards();
+                        } else if (currentTitle === 'Статусы доставки') {
+                            showTravelCards();
+                        } else {
+                            showDetails(currentTitle);
+                        }
+                        
+                    } else {
+                        showTempNotification('Ошибка сохранения: ' + result.message, 'error');
+                        saveButton.textContent = originalText;
+                        saveButton.disabled = false;
+                    }
+                })
+                .withFailureHandler(function(error) {
+                    showTempNotification('Ошибка соединения: ' + error, 'error');
+                    saveButton.textContent = originalText;
+                    saveButton.disabled = false;
+                })
+                .updateCardData(cardId, updatedData);
+        }
+
+        // Функция закрытия диалога
+        function closeEditDialog() {
+            if (window.currentEditDialog) {
+                window.currentEditDialog.remove();
+                window.currentEditDialog = null;
+            }
+        }
+
+        // Закрытие по ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && window.currentEditDialog) {
+                closeEditDialog();
+            }
+        });
+        
+        function addNewPostcard() {
+            if (confirm('Добавить новую открытку в таблицу?')) {
+                google.script.run
+                    .withSuccessHandler(function(result) {
+                        alert('Новая открытка добавлена! Обновите страницу чтобы увидеть изменения.');
+                        loadStatusData(); // Обновляем счетчики
+                    })
+                    .withFailureHandler(function(error) {
+                        alert('Ошибка: ' + error);
+                    })
+                    .addNewPostcardToSheet();
+            }
+        }
+        
+        function openMap() {
+            google.script.run.showPostcardMap();
+        }
+
+        function loadStatusImages() {
+            google.script.run
+                .withSuccessHandler(function(images) {
+                    console.log('Получены ссылки на изображения:', images);
+                    // Загружаем изображения для каждого статуса
+                    Object.keys(images).forEach(function(status) {
+                        const imgElement = document.querySelector(`img[data-status="${status}"]`);
+                        if (imgElement && images[status]) {
+                            console.log(`Загружаем изображение для статуса: ${status}`, images[status]);
+                            imgElement.src = images[status];
+                            // Добавляем обработчик ошибки загрузки
+                            imgElement.onerror = function() {
+                                console.error(`Ошибка загрузки изображения для статуса: ${status}`);
+                                this.style.display = 'none';
+                            };
+                            imgElement.onload = function() {
+                                console.log(`Изображение загружено для статуса: ${status}`);
+                                this.classList.add('loaded');
+                            };
+                        }
+                    });
+                })
+                .withFailureHandler(function(error) {
+                    console.log('Ошибка загрузки изображений, используем SVG:', error);
+                    // Показываем все SVG иконки
+                    document.querySelectorAll('.fallback-icon').forEach(icon => {
+                        icon.style.display = 'block';
+                    });
+                })
+                .getStatusImages();
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+
+          const statusPromise = new Promise((resolve) => {
+              google.script.run
+                  .withSuccessHandler(function(data) {
+                      statusData = data;
+                      updateDeskView();
+                      resolve();
+                  })
+                  .withFailureHandler(function(error) {
+                      console.error('Ошибка загрузки статусов:', error);
+                      resolve();
+                  })
+                  .getStatusCounts();
+          });
+
+          const imagesPromise = new Promise((resolve) => {
+              google.script.run
+                  .withSuccessHandler(function(images) {
+                      loadImages(images);
+                      resolve();
+                  })
+                  .withFailureHandler(function(error) {
+                      console.log('Ошибка загрузки изображений:', error);
+                      resolve();
+                  })
+                  .getStatusImages();
+          });
+
+          Promise.all([statusPromise, imagesPromise]).then(() => {
+              console.log('Все данные загружены');
+          });
+        });
+    </script>
+</body>
+</html>
